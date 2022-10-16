@@ -1,0 +1,20 @@
+* {
+  margin: 0%;
+  padding: 0%;
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+  background-color: "#faf8f6" !important
+}
+
+@media screen and (max-width: 800px) {
+  .common-card {
+    width: 90vw !important;
+    transform: 0.3s ease !important;
+  }
+}
+
+@media screen and (min-width: 800px) {
+  .common-card {
+    width: 500px !important;
+  }
+}

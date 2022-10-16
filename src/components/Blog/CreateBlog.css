@@ -1,0 +1,59 @@
+.tags>a {
+    text-decoration: none;
+}
+
+.tag {
+    background: #f1f1f1;
+    padding: 10px 15px;
+    color: #222;
+    margin-right: 8px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+
+.tag-container {
+    display: flex;
+    overflow: scroll;
+    /* padding-left: 14px; */
+    border: 1px grey solid;
+    border-radius: 5px;
+    color: black
+}
+
+.tag-container input {
+    width: 100%;
+    min-width: 50%;
+    border: none;
+    border-radius: 5px;
+    padding: 7px;
+    /* padding-left: 14px; */
+}
+
+.tag-ops {
+    display: flex;
+    justify-content: space-between;
+}
+
+.tag {
+    display: flex;
+    align-items: center;
+    margin: 7px 0;
+    margin-right: 10px;
+    padding: 0 10px;
+    padding-right: 5px;
+    /* border: 1px solid rgb(128, 57, 235); */
+    border-radius: 5px;
+    /* background-color: rgb(128, 57, 235); */
+    color: #212221;
+}
+
+.tag button {
+    display: flex;
+    padding: 0px 7px;
+    border: none;
+    background-color: unset;
+    cursor: pointer;
+    color: #212221;
+}

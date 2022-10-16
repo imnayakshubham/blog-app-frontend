@@ -1,0 +1,35 @@
+.profile-container h2 {
+    text-align: center;
+    color: #0072ce;
+    margin-bottom: 20px;
+}
+
+.profile-container .profile-card {
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-container .profile-card .card-image img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #fff;
+}
+
+@media screen and (min-width: 900px) {
+    .profile-container .profile-card {
+        flex-direction: row;
+        padding-top: 40px;
+        padding-bottom: 40px;
+        justify-content: space-evenly;
+    }
+
+    .profile-container .profile-card .card-image {
+        margin-bottom: 0px;
+        padding-right: 20px;
+    }
+}

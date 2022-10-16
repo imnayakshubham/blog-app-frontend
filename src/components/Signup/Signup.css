@@ -1,0 +1,12 @@
+@media screen and (max-width: 800px) {
+    .common-card {
+        width: 90vw !important;
+        transform: 0.3s ease !important;
+    }
+}
+
+@media screen and (min-width: 800px) {
+    .common-card {
+        width: 500px !important;
+    }
+}

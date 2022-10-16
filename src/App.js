@@ -12,11 +12,7 @@ const Profile = React.lazy(() => import('./components/Profile/Profile'))
 const Blogs = React.lazy(() => import('./components/Blogs/Blogs'))
 const ViewBlog = React.lazy(() => import('./components/Blog/Blog'))
 const CreateBlog = React.lazy(() => import('./components/Blog/CreateBlog'))
-
-
-
-
-
+const NotFound = React.lazy(() => import('./components/NotFound/NotFound'))
 
 function App() {
   return (
@@ -45,7 +41,6 @@ function App() {
               <CreateBlog />
             </React.Suspense>
           } />
-
           <Route path="/blog/:id" element={
             <React.Suspense fallback={<></>}>
               <ViewBlog />
@@ -57,8 +52,12 @@ function App() {
                 <Profile />
               </React.Suspense>
             } />
-
           </Route>
+          <Route path="*" element={
+            <React.Suspense fallback={<></>}>
+              <NotFound />
+            </React.Suspense>
+          } />
         </Routes>
       </div>
     </>

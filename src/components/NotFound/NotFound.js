@@ -6,7 +6,7 @@ import "./NotFound.css"
 
 const { Text } = Typography;
 
-export const NotFound = () => {
+const NotFound = () => {
     return (
         <div className="text">
             <Result
@@ -15,9 +15,11 @@ export const NotFound = () => {
                 subTitle="Sorry, the page you visited does not exist."
                 extra={<Button type="primary">
                     <Link to="/">
-                        <Text className='errorcode'>Login</Text>
+                        <Text className='errorcode'>Home</Text>
                     </Link></Button>}
             />
         </div>
     )
 }
+
+export default NotFound

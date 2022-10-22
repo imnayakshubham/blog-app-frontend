@@ -146,9 +146,6 @@ const blogsReducer = handleActions({
         const blogs = state.blogsData.blogs
 
         const resultForCategory = blogs[response.category]?.find((blog) => blog?._id === payload.blogId) ?? {};
-        if (!!Object.keys(resultForCategory).length) {
-            console.log("resultForCategory", resultForCategory);
-        }
 
         const finalObj = {
             ...blogs,

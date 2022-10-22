@@ -1,6 +1,6 @@
 import { UploadOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Upload } from 'antd';
-import React, { useEffect } from 'react'
+import { Button, Form, Input, Select, Upload } from 'antd';
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import "./profile.css"
@@ -8,11 +8,13 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { updateProfileRequest } from '../../store/actions/login';
 import { AsyncStates } from '../../constants';
+import { countryNames } from '../../constants/countries';
 
 
 export default function EditProfile({ setEditProfile }) {
     const { loginResponse: userInfo, updateProfileStatus } = useSelector((state) => state.login);
     const dispatch = useDispatch();
+    const [imageUploadStatus, setImageUploadStatus] = useState(false);
 
     const [editProfileForm] = Form.useForm();
 
@@ -33,16 +35,17 @@ export default function EditProfile({ setEditProfile }) {
         let payload = {}
         let imageData = {}
         if (pic) {
+            setImageUploadStatus(true);
             const imageFile = pic.file.originFileObj
             const data = new FormData();
             data.append("file", imageFile);
             data.append("upload_preset", "blog-app");
             data.append("cloud_name", "nayak-shubham");
-
             imageData = await axios.post(process.env.REACT_APP_CLOUDINARY_URL, data)
         }
 
         if (!!Object.keys(imageData || {}).length) {
+            setImageUploadStatus(false);
             payload = { ...payload, pic: imageData.data.secure_url }
         }
         if (email && email !== userInfo.email) {
@@ -65,9 +68,6 @@ export default function EditProfile({ setEditProfile }) {
     };
 
 
-
-
-
     return (
         <>
             <Form
@@ -76,18 +76,21 @@ export default function EditProfile({ setEditProfile }) {
                 onFinish={onFinish}
             // onValuesChange={onFormLayoutChange}
             >
-                <Form.Item label="Update Email" name={"email"}>
+                <Form.Item label="Email" name={"email"}>
                     <Input type='email' />
                 </Form.Item>
-                <Form.Item label="Update Username" name={"user_name"}>
+                <Form.Item label="Username" name={"user_name"}>
                     <Input type='text' />
                 </Form.Item>
-                <Form.Item label="Update Country" name={"location"}>
-                    <Input type='text' />
+                <Form.Item label="Country" name={"location"}>
+                    <Select placeholder="Select a country" allowClear showSearch>
+                        {countryNames.map((country) => <Select.Option key={country} value={country}>{country}</Select.Option>)}
+                    </Select>
                 </Form.Item>
 
                 <Form.Item
                     name="description"
+                    label="Description"
                 >
                     <ReactQuill
                         theme="snow"
@@ -101,13 +104,13 @@ export default function EditProfile({ setEditProfile }) {
                         listType="picture"
                         accept="image/*"
                     >
-                        <Button icon={<UploadOutlined />}>Upload (Max: 1)</Button>
+                        <Button icon={<UploadOutlined />} loading={imageUploadStatus}>Upload (Max: 1)</Button>
                     </Upload>
 
                 </Form.Item>
                 <Form.Item>
                     <Button type="primary" htmlType="submit" style={{ width: "100%", borderRadius: "7.5px" }} loading={updateProfileStatus === AsyncStates.LOADING}>
-                        Update
+                        Update Profile
                     </Button>
                 </Form.Item>
             </Form>

@@ -10,23 +10,11 @@ import axios from 'axios';
 
 const { Text } = Typography
 
-const CreateBlog = ({ from, blog }) => {
+const CreateBlog = ({ from, blog, setVisible }) => {
     const [form] = useForm()
     const dispatch = useDispatch()
     const { updateBlogStatus, addBlogStatus } = useSelector((state) => state.blogs)
     const [imageUpload, setImageUpload] = useState(false)
-
-    useEffect(() => {
-        if (AsyncStates.SUCCESS === updateBlogStatus) {
-            form.setFieldsValue(blog)
-        }
-    }, [form, updateBlogStatus, blog])
-
-    useEffect(() => {
-        if (AsyncStates.SUCCESS === addBlogStatus) {
-            form.setFieldsValue({})
-        }
-    }, [form, addBlogStatus, blog])
 
     useEffect(() => {
         if (blog) {
@@ -55,13 +43,14 @@ const CreateBlog = ({ from, blog }) => {
         } else {
             dispatch(updateBlogRequest({ ...blog, ...payload }))
         }
+        setVisible(false)
     }
 
     return (
         <>
             <Spin spinning={false}>
                 <Space style={{ display: "flex", justifyContent: "center", alignItems: "center", height: from !== "edit" ? "89vh" : null }}>
-                    <Card title={<Text strong>{(blog) ? "Edit Blog" : "Create Blog"}</Text>} style={{ width: "500px", ...(!blog ? cardCommonStyles : {}) }} className="common-card" loading={imageUpload}>
+                    <Card title={<Text strong>{(blog) ? "Edit Blog" : "Create Blog"}</Text>} style={{ width: "500px", ...(!blog ? cardCommonStyles : {}) }} className="common-card">
                         <Row style={{ marginBottom: "1rem" }}>
                             {/* {errorInfo && <Alert message={errorInfo} type="error" showIcon style={{ width: "100%" }} />} */}
                         </Row>
@@ -123,6 +112,7 @@ const CreateBlog = ({ from, blog }) => {
                                 name="photo"
                                 label="Picture"
                                 tooltip="Click on the icon/Image to upload"
+                                rules={[{ required: true, message: 'Please input your Category!' }]}
                             >
                                 <Upload
                                     maxCount={1}
@@ -136,7 +126,7 @@ const CreateBlog = ({ from, blog }) => {
                             </Form.Item>
 
                             <Form.Item>
-                                <Button type="primary" htmlType="submit" style={{ width: "100%", borderRadius: "7.5px" }}>
+                                <Button type="primary" htmlType="submit" style={{ width: "100%", borderRadius: "7.5px" }} loading={addBlogStatus === AsyncStates.LOADING || updateBlogStatus === AsyncStates.LOADING || imageUpload}>
                                     Post A Blog
                                 </Button>
                             </Form.Item>

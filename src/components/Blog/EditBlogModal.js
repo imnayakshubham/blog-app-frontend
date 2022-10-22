@@ -14,7 +14,7 @@ const EditBlogModal = ({ blog, visible, setVisible }) => {
             footer={null}
             width={600}
         >
-            <CreateBlog from="edit" blog={blog} />
+            <CreateBlog from="edit" blog={blog} setVisible={setVisible} />
         </Modal>
     )
 }

@@ -1,6 +1,7 @@
 import { Alert, Button, Card, Form, Input, Row, Space, Typography } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom';
+import { AsyncStates } from '../../constants';
 import { loginRequest } from '../../store/actions/login';
 
 const { Text } = Typography;
@@ -8,7 +9,7 @@ const { Text } = Typography;
 
 const Login = () => {
     const dispatch = useDispatch()
-    const { loginErrorMessage } = useSelector(state => state.login);
+    const { loginErrorMessage, loginStatus } = useSelector(state => state.login);
 
     const onFinish = (payload) => {
         dispatch(loginRequest(payload))
@@ -45,8 +46,8 @@ const Login = () => {
 
 
                         <Form.Item>
-                            <Button type="primary" htmlType="submit" style={{ width: "100%", borderRadius: "7.5px" }}>
-                                Submit
+                            <Button type="primary" htmlType="submit" style={{ width: "100%", borderRadius: "7.5px" }} loading={loginStatus === AsyncStates.LOADING}>
+                                Login
                             </Button>
                         </Form.Item>
                     </Form>

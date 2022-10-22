@@ -82,6 +82,9 @@ function* deleteBlogSaga({ payload }) {
         const { data: { status, message } } = yield call(deleteBlogApi, apiPayload, headers)
         if (status === "Success") {
             yield put(deleteBlogSuccess(message, reducerPayload))
+            notification.success({
+                message, duration: 2.5,
+            })
         } else {
             notification.error({
                 message, duration: 2.5,
@@ -109,6 +112,9 @@ function* updateBlogSaga({ payload }) {
         const { data: { status, message } } = yield call(updateBlogApi, payload, headers)
         if (status === "Success") {
             yield put(updateBlogSuccess(message, payload))
+            notification.success({
+                message, duration: 2.5,
+            })
         } else {
             notification.error({
                 message, duration: 2.5,

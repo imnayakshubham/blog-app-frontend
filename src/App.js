@@ -18,7 +18,7 @@ function App() {
   return (
     <>
       <Header />
-      <div style={{ margin: "1.5rem", height: "100vh-60px" }}>
+      <div style={{ margin: "1.2rem", height: "100vh-60px" }}>
         <Routes>
           <Route path="/login" element={
             <React.Suspense fallback={<></>}>

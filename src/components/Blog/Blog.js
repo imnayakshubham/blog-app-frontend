@@ -52,8 +52,9 @@ const Blog = () => {
                             blog?.photo &&
                             <Image
                                 style={{ objectFit: "cover" }}
-                                alt="example"
+                                alt={blog.title}
                                 src={blog?.photo}
+                                loading={"lazy"}
                             />
                         }
                     </>

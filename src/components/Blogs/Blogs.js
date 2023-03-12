@@ -94,8 +94,6 @@ const Blogs = React.memo(() => {
         }
     }
 
-    console.log({ blogs: blogs?.[tab.activeTab] })
-
     return (
         <>
             <Card style={{ width: "100%", border: "none" }}
@@ -149,6 +147,7 @@ const Blogs = React.memo(() => {
                                             blog?.photo &&
                                             <img
                                                 className='blog__image'
+                                                loading={"lazy"}
                                                 alt={blog?.title}
                                                 src={blog?.photo}
                                             />

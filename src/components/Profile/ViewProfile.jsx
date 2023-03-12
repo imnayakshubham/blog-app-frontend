@@ -11,7 +11,7 @@ export default function ViewProfile() {
         <section className="profile-container">
             <div className="profile-card">
                 <div className="card-image">
-                    <Image src={userInfo.pic} alt={userInfo.user_name + "."} />
+                    <Image src={userInfo.pic} alt={userInfo.user_name + "."} loading={"lazy"} />
                 </div>
                 <div className="card-text">
                     <Descriptions title="Profile Info" size={"medium"} bordered className='desc'>

@@ -92,7 +92,6 @@ function* deleteBlogSaga({ payload }) {
             yield put(deleteBlogFailure(message))
         }
     } catch (error) {
-        console.log({ error });
         notification.error({
             message: "SomeThing Went Wrong",
             duration: 2.5,
@@ -148,7 +147,6 @@ function* updateLikeSaga({ payload }) {
             yield put(updateLikeFailure(message))
         }
     } catch (error) {
-        console.log({ error });
         notification.error({
             message: "SomeThing Went Wrong",
             duration: 2.5,

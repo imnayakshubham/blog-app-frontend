@@ -118,7 +118,7 @@ export const BlogCard = ({ blog }) => {
             </Card>
             <Modal
                 title={<>Are you sure you want to Delete blog <Text strong>{blog?.title}?</Text></>}
-                visible={visible}
+                open={visible}
                 onOk={() => handleDeleteBlogPost(blog)}
                 onCancel={() => setVisible(false)}
                 okText="Delete"

@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import React from 'react';
 import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes';
+import AccessibilityWidget from './lib/components/AccessibilityWidget';
 
 
 const Header = React.lazy(() => import('./components/Header/Header.jsx'));
@@ -18,7 +19,7 @@ function App() {
   return (
     <>
       <Header />
-      <div style={{ margin: "1.2rem", height: "100vh-60px" }}>
+      <main style={{ margin: "1.2rem", height: "100vh-60px" }}>
         <Routes>
           <Route path="/login" element={
             <React.Suspense fallback={<></>}>
@@ -59,7 +60,8 @@ function App() {
             </React.Suspense>
           } />
         </Routes>
-      </div>
+        <AccessibilityWidget />
+      </main>
     </>
   );
 }

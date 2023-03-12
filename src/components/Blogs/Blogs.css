@@ -1,0 +1,157 @@
+/* Layout */
+
+.articles {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.blog__post {
+    padding: 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    background-color: rgb(255, 255, 255);
+
+}
+
+.blog__actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 9.5rem;
+}
+
+.divider {
+    margin: 0;
+}
+
+.blog__likes {
+    align-items: center;
+    cursor: pointer;
+    font-size: 16px;
+    gap: 0.5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.like__icon {
+    font-size: 1rem;
+    padding: 0.5rem;
+}
+
+.blog__details {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+#heading {
+    display: flex;
+    align-items: center;
+}
+
+.blog__image {
+    width: 40%;
+    height: 15rem;
+    border-radius: 5%;
+}
+
+/* Styling */
+
+#heading h1 span {
+    font-size: 1em;
+    color: #71BC2F;
+}
+
+article {
+    border-bottom: 1px solid #e1e1e1;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+}
+
+article img {
+    margin-right: 15px;
+}
+
+.blog__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 24px;
+}
+
+.blog__title a {
+    display: block;
+}
+
+.blog__title a:hover {
+    color: #444;
+}
+
+.blog__footer {
+    color: #818181;
+    font-size: 0.875rem;
+    margin-top: 10px;
+}
+
+.blog__author {
+    font-weight: 700;
+}
+
+.blog__date::before {
+    content: "•";
+    padding: 0 0.5rem;
+}
+
+span {
+    font-size: 11px;
+}
+
+p {
+    font-size: 13px;
+}
+
+h2 {
+    margin: 0;
+    padding: 0;
+    line-height: 1em;
+}
+
+.delete__icon,
+.edit_btn,
+.edit__icon {
+    font-size: 1rem;
+}
+
+.blog___actions__container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+@media (max-width: 779px) {
+    .blog__image {
+        width: 100%;
+        border-radius: 4px;
+        padding: 9px;
+    }
+
+    /* .blog__actions {
+        justify-content: space-evenly;
+    }
+
+     */
+    .blog__details {
+        width: 100%;
+    }
+
+    article {
+        flex-direction: column;
+    }
+
+    article img {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}

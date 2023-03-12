@@ -9,7 +9,7 @@ const EditBlogModal = ({ blog, visible, setVisible }) => {
     return (
         <Modal
             title={<Title level={4}>Are you sure you want to Edit blog {blog?.title}?</Title>}
-            visible={visible}
+            open={visible}
             onCancel={() => setVisible(false)}
             footer={null}
             width={600}

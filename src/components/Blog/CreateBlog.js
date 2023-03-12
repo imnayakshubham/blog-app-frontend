@@ -16,6 +16,21 @@ const CreateBlog = ({ from, blog, setVisible }) => {
     const { updateBlogStatus, addBlogStatus } = useSelector((state) => state.blogs)
     const [imageUpload, setImageUpload] = useState(false)
 
+    const modules = {
+        toolbar: [
+            [{ header: [1, 2, false] }],
+            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+            [
+                { list: 'ordered' },
+                { list: 'bullet' },
+                { indent: '-1' },
+                { indent: '+1' },
+            ],
+            ['link', 'image'],
+            ['clean'],
+        ],
+    };
+
     useEffect(() => {
         if (blog) {
             form.setFieldsValue(blog)
@@ -77,7 +92,9 @@ const CreateBlog = ({ from, blog, setVisible }) => {
                                 <ReactQuill
                                     theme="snow"
                                     placeholder={"Enter Content"}
+                                    modules={modules}
                                 />
+
                             </Form.Item>
 
                             <Form.Item

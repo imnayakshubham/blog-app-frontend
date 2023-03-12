@@ -4,7 +4,6 @@ import './index.css';
 import App from './App';
 import { Provider } from 'react-redux';
 import { persistor, store } from './store/configureStore';
-import 'antd/dist/antd.css';
 import { HistoryRouter } from './HistoryRouter';
 import { PersistGate } from "redux-persist/integration/react"
 import { createBrowserHistory } from "history"

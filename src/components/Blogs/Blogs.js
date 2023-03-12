@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, Divider, Image, List, Modal, notification, Skeleton, Space, Tabs, Tag, Typography } from 'antd';
+import { Avatar, Button, Card, Divider, List, Modal, notification, Tabs, Tag, Typography } from 'antd';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteBlogRequest, fetchBlogsRequest, updateLikeRequest } from '../../store/actions/blogs';
@@ -7,7 +7,9 @@ import { AsyncStates, blogCategoryOptions } from '../../constants';
 import { DeleteOutlined, EditOutlined, HeartTwoTone } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import EditBlogModal from '../Blog/EditBlogModal';
-const { Text, Title } = Typography
+import { Spinner } from '../Spinner/Spinner';
+import "./Blogs.css"
+const { Text } = Typography
 
 const Blogs = React.memo(() => {
     const dispatch = useDispatch();
@@ -87,15 +89,16 @@ const Blogs = React.memo(() => {
                 }>
                     Login Here
                 </Button >,
-                duration: 3,
+                duration: 5,
             })
         }
     }
 
+    console.log({ blogs: blogs?.[tab.activeTab] })
+
     return (
         <>
             <Card style={{ width: "100%", border: "none" }}
-                loading={!blogs[tab.activeTab].length && fetchBlogsStatus === AsyncStates.LOADING}
                 title={
                     <Tabs activeKey={tab.activeTab} onChange={(key) => {
                         if (tab.visitedTabs.includes(key)) {
@@ -109,83 +112,85 @@ const Blogs = React.memo(() => {
                         } else {
                             handleTabChange(key)
                         }
-                    }}>
-                        {["all", ...blogCategoryOptions].map((category) => <Tabs.TabPane tabKey={category} key={category} tab={
-                            <Text style={{ maxWidth: "175px" }} ellipsis={
-                                { tooltip: category }
-                            }>
-                                {category?.[0]?.toUpperCase() + category?.slice(1, category.length)}</Text>
-                        } />
-                        )}
+                    }}
+                        items={["all", ...blogCategoryOptions].map((category, i) => {
+                            return {
+                                label: <Text style={{ maxWidth: "175px" }} ellipsis={{ tooltip: category }}> {category?.[0]?.toUpperCase() + category?.slice(1, category.length)}</Text>,
+                                key: category,
+                                tabKey: category
+                            };
+                        })}
+                    >
                     </Tabs>
                 }
             >
-                <InfiniteScroll
-                    dataLength={blogs[tab.activeTab].length}
-                    next={fetchData}
-                    hasMore={blogs[tab.activeTab].length < total}
-                    scrollableTarget="scrollableDiv"
-                >
-                    <List
-                        itemLayout="vertical"
-                        dataSource={blogs?.[tab.activeTab].sort(function (a, b) {
-                            return a.title.localeCompare(b.title, undefined, {
-                                numeric: true,
-                                sensitivity: 'base'
-                            })
-                        })}
-                        renderItem={blog => (
-                            <List.Item
-                                style={{ borderBottom: "1px solid #e8e8e8", margin: "10px", cursor: "pointer" }}
-                                key={blog._id}
-                                actions={[
-                                    <Space style={{ display: "flex", justifyContent: "space-between", fontSize: 16 }} size="large">
-                                        <Text strong style={{ cursor: "pointer", fontSize: 16 }} onClick={() => handleLike(blog)}>{blog?.likes?.length} <HeartTwoTone title={blog?.likes?.length} twoToneColor={blog.likes.includes(userInfo.id) ? "#eb2f96" : null} /></Text>
-                                        <Divider type="vertical" />
-                                        {userInfo?.id === blog?.posted_by?._id &&
-                                            <Space style={{ display: "flex", justifyContent: "center", width: "100%" }}>
-                                                <DeleteOutlined onClick={(e) => { setSelectedBlog(blog); setVisible(true); }} />
-                                                <Divider type="vertical" />
-                                                <Button onClick={(e) => { setSelectedBlog(blog); setEditModalVisible(true) }}
-                                                    type="link" icon={<EditOutlined />}>{"Edit"}</Button>
-                                            </Space>
-                                        }
-                                    </Space>
-                                ]}
-                                extra={
-                                    <>
+
+                {!blogs[tab.activeTab].length && fetchBlogsStatus === AsyncStates.LOADING ? <Spinner /> :
+
+                    <InfiniteScroll
+                        dataLength={blogs[tab.activeTab].length}
+                        next={fetchData}
+                        hasMore={blogs[tab.activeTab].length < total}
+                        scrollableTarget="scrollableDiv"
+                    >
+                        <List
+                            itemLayout="vertical"
+                            className='articles'
+                            dataSource={blogs?.[tab.activeTab].sort(function (a, b) {
+                                return a.title.localeCompare(b.title, undefined, {
+                                    numeric: true,
+                                    sensitivity: 'base'
+                                })
+                            })}
+                            renderItem={blog => (
+                                <>
+                                    <article className='blog__post'>
                                         {
                                             blog?.photo &&
-                                            <Image
-                                                style={{ height: "200px", width: "100%" }}
+                                            <img
+                                                className='blog__image'
                                                 alt={blog?.title}
                                                 src={blog?.photo}
                                             />
                                         }
-                                    </>
-                                }
-                            >
-                                <List.Item.Meta
-                                    onClick={(e) => { e.preventDefault(); navigateTo(`/blog/${blog?._id}`, { state: blog }) }}
-                                    avatar={<Avatar src={blog?.posted_by?.pic} />}
-                                    title={<Title level={3}>{blog?.title}</Title>}
-                                    description={<Space direction="vertical">
-                                        <Tag color="magenta">{blog?.category}</Tag>
-                                        <p>
-                                            <span dangerouslySetInnerHTML={{ __html: `${blog.description.slice(0, 250).trim()}` }}></span>
-                                            <Text strong>{blog.description?.length > 300 ? "Click here to Read More" : ""}</Text>
-                                        </p>
-                                    </Space>}
-                                />
-                            </List.Item>
-                        )}
-                        loader={<Skeleton avatar paragraph={{ rows: 2 }} active />}
-                    />
-                </InfiniteScroll>
+                                        <div className="blog__details">
+                                            <span><Tag color="magenta">{blog?.category}</Tag></span>
+                                            <h2>{blog.title}</h2>
+                                            <p>
+                                                <span dangerouslySetInnerHTML={{ __html: `${blog.description.slice(0, 250).trim()}...` }}></span>
+                                            </p>
+                                            <div class="article__footer">
+                                                <span class="blog__author"><Avatar src={blog?.posted_by?.pic} alt={blog?.posted_by?.user_name} /> {blog?.posted_by?.user_name}</span>
+                                                <span class="blog__date">{new Date(blog.createdAt).toUTCString()}</span>
+                                            </div>
+
+                                            <Divider className='divider' />
+                                            <div className='blog__actions'>
+                                                <div className='blog___actions__container'>
+                                                    <div className='blog__likes' onClick={() => handleLike(blog)}>
+                                                        <Text strong>{blog?.likes?.length}</Text>
+                                                        <HeartTwoTone className='like__icon' title={blog?.likes?.length} twoToneColor={blog.likes.includes(userInfo.id) ? "#eb2f96" : null} />
+                                                    </div>
+                                                    {userInfo?.id === blog?.posted_by?._id &&
+                                                        <div>
+                                                            <DeleteOutlined className='delete__icon' onClick={(e) => { setSelectedBlog(blog); setVisible(true); }} />
+                                                            <Button className='edit_btn' onClick={(e) => { setSelectedBlog(blog); setEditModalVisible(true) }}
+                                                                type="link" icon={<EditOutlined className='edit__icon' />}>{"Edit"}</Button>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </>
+                            )}
+                        />
+                    </InfiniteScroll>
+                }
             </Card>
             <Modal
                 title={<>Are you sure you want to Delete blog <Text strong>{selectedBlog?.title}?</Text></>}
-                visible={visible}
+                open={visible}
                 onOk={() => handleDeleteBlogPost(selectedBlog)}
                 onCancel={() => setVisible(false)}
                 okText="Delete"

@@ -30,8 +30,8 @@ export const jobType = [
 
 
 export const blogCategoryOptions = [
-	"Fashion",
 	"Technology",
+	"Fashion",
 	"Food",
 	"Politics",
 	"Sports",

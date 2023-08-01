@@ -49,13 +49,14 @@ const Blog = () => {
                 cover={
                     <>
                         {
-                            blog?.photo &&
-                            <Image
-                                style={{ objectFit: "cover" }}
-                                alt={blog.title}
-                                src={blog?.photo}
-                                loading={"lazy"}
-                            />
+                            blog?.photo ?
+                                <Image
+                                    style={{ objectFit: "cover" }}
+                                    alt={blog.title}
+                                    src={blog?.photo}
+                                    preview={false}
+                                />
+                                : "QAXXSS"
                         }
                     </>
                 }

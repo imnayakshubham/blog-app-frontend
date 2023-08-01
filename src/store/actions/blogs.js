@@ -61,5 +61,5 @@ export const {
     [UpdateBlogActionTypes.FAILURE]: (error) => ({ error }),
     [UpdateLikeActionTypes.REQUEST]: (payload) => payload,
     [UpdateLikeActionTypes.SUCCESS]: (response, payload) => ({ response, payload }),
-    [UpdateLikeActionTypes.FAILURE]: (error) => ({ error }),
+    [UpdateLikeActionTypes.FAILURE]: (error) => ({ error })
 })

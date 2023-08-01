@@ -1,32 +1,29 @@
-import { Avatar, Button, Card, Divider, List, Modal, notification, Tabs, Tag, Typography } from 'antd';
+import { Avatar, Button, Card, Divider, Empty, Modal, notification, Tabs, Tag, Typography } from 'antd';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteBlogRequest, fetchBlogsRequest, updateLikeRequest } from '../../store/actions/blogs';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { AsyncStates, blogCategoryOptions } from '../../constants';
+import { AsyncStates } from '../../constants';
 import { DeleteOutlined, EditOutlined, HeartTwoTone } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import EditBlogModal from '../Blog/EditBlogModal';
 import { Spinner } from '../Spinner/Spinner';
 import "./Blogs.css"
+import { fetchCategoriesRequest } from '../../store/actions/blogCategories';
 const { Text } = Typography
 
 const Blogs = React.memo(() => {
     const dispatch = useDispatch();
     const navigateTo = useNavigate();
     const { loginResponse: userInfo } = useSelector((state) => state.login);
-    const { fetchBlogsStatus, deleteBlogStatus } = useSelector(state => state.blogs);
+    const { blogsData: { blogs = {}, total = 0 }, fetchBlogsStatus, deleteBlogStatus } = useSelector(state => state.blogs);
+    const { categoryList } = useSelector(state => state.blogCategories);
+
+
     const [visible, setVisible] = useState(false);
     const [editModalvisible, setEditModalVisible] = useState(false);
-    const [currentPage, setCurrentPage] = useState({
-        all: 1,
-        Fashion: 1,
-        Technology: 1,
-        Food: 1,
-        Politics: 1,
-        Sports: 1,
-        Business: 1,
-    });
+
+    const [currentPage, setCurrentPage] = useState({});
     const [tab, setTab] = useState({
         activeTab: "all",
         visitedTabs: ["all"],
@@ -34,14 +31,14 @@ const Blogs = React.memo(() => {
 
     const [selectedBlog, setSelectedBlog] = useState(null);
 
-    const { blogsData: { blogs = {}, total = 0 } } = useSelector(state => state.blogs);
+    useEffect(() => {
+        setCurrentPage(categoryList.categories.reduce((acc, curr) => ({ ...acc, [curr.value]: 1 }), {}))
+    }, [categoryList])
+
 
     useEffect(() => {
-        if ((!blogs[tab.activeTab].length)) {
-            dispatch(fetchBlogsRequest({ pageNumber: 1 }))
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dispatch, userInfo])
+        dispatch(fetchCategoriesRequest())
+    }, [dispatch])
 
     const handleTabChange = (key) => {
         dispatch(fetchBlogsRequest(key !== "all" ? { category: key, pageNumber: currentPage[key] } : { pageNumber: currentPage[key] }))
@@ -80,7 +77,7 @@ const Blogs = React.memo(() => {
 
     const handleLike = (blog) => {
         if (userInfo?.id) {
-            dispatch(updateLikeRequest({ blogId: blog?._id, userId: userInfo?.id, category: blog?.category }));
+            dispatch(updateLikeRequest({ blogId: blog?._id, userId: userInfo?.id, category: tab.activeTab, isAll: tab.activeTab === "all" }));
         } else {
             notification.error({
                 message: "Please login to like the post",
@@ -92,6 +89,29 @@ const Blogs = React.memo(() => {
                 duration: 5,
             })
         }
+    }
+
+    function convertToHTML(content) {
+        let html = '';
+
+        content.forEach(block => {
+            switch (block.type) {
+                case 'paragraph':
+                    html += `<p>${block.data.text}</p>`;
+                    break;
+                case 'header':
+                    html += `<h${block.data.level}>${block.data.text}</h${block.data.level}>`;
+                    break;
+                case 'quote':
+                    html += `<blockquote>${block.data.text}</blockquote>`;
+                    break;
+                // Handle other block types here
+                default:
+                    break;
+            }
+        });
+
+        return html;
     }
 
     return (
@@ -111,11 +131,11 @@ const Blogs = React.memo(() => {
                             handleTabChange(key)
                         }
                     }}
-                        items={["all", ...blogCategoryOptions].map((category, i) => {
+                        items={categoryList.categories.map((category, i) => {
                             return {
-                                label: <Text style={{ maxWidth: "175px" }} ellipsis={{ tooltip: category }}> {category?.[0]?.toUpperCase() + category?.slice(1, category.length)}</Text>,
-                                key: category,
-                                tabKey: category
+                                label: <Text style={{ maxWidth: "175px" }} ellipsis={{ tooltip: category.label }}>{category.label}</Text>,
+                                key: category.key,
+                                tabKey: category.value
                             };
                         })}
                     >
@@ -123,68 +143,66 @@ const Blogs = React.memo(() => {
                 }
             >
 
-                {!blogs[tab.activeTab].length && fetchBlogsStatus === AsyncStates.LOADING ? <Spinner /> :
+                {!blogs[tab.activeTab]?.length && fetchBlogsStatus === AsyncStates.LOADING ? <Spinner /> : <>
+                    {!!blogs?.[tab.activeTab]?.length ?
+                        <InfiniteScroll
+                            dataLength={blogs[tab.activeTab]?.length}
+                            next={fetchData}
+                            hasMore={blogs[tab.activeTab]?.length < total}
+                            scrollableTarget="scrollableDiv"
+                        >
+                            <div id='scrollableDiv'>
+                                {blogs?.[tab.activeTab].map((blog) =>
+                                    <React.Fragment key={blog?._id}>
+                                        <article className='blog__post' onClick={() => navigateTo(`/blog/${blog?._id}`, { state: blog })}>
+                                            {
+                                                blog?.cover_image ?
+                                                    <img
+                                                        className='blog__image'
+                                                        loading={"lazy"}
+                                                        alt={blog?.title}
+                                                        src={blog?.cover_image}
+                                                    />
+                                                    : <div className='no__img__container'><Empty description={false} /></div>
+                                            }
+                                            <div className="blog__details">
+                                                <span><Tag color="magenta">{blog?.category}</Tag></span>
+                                                <h2>{blog.title}</h2>
+                                                <p>
+                                                    <span dangerouslySetInnerHTML={{ __html: `${convertToHTML(blog?.content)?.slice(0, 250).trim()}...` }}></span>
+                                                </p>
+                                                <div className="article__footer">
+                                                    <span className="blog__author"><Avatar src={blog?.posted_by?.pic} alt={blog?.posted_by?.user_name} /> {blog?.posted_by?.user_name}</span>
+                                                    <span className="blog__date">{new Date(blog.createdAt).toUTCString()}</span>
+                                                </div>
 
-                    <InfiniteScroll
-                        dataLength={blogs[tab.activeTab].length}
-                        next={fetchData}
-                        hasMore={blogs[tab.activeTab].length < total}
-                        scrollableTarget="scrollableDiv"
-                    >
-                        <List
-                            itemLayout="vertical"
-                            className='articles'
-                            dataSource={blogs?.[tab.activeTab].sort(function (a, b) {
-                                return a.title.localeCompare(b.title, undefined, {
-                                    numeric: true,
-                                    sensitivity: 'base'
-                                })
-                            })}
-                            renderItem={blog => (
-                                <>
-                                    <article className='blog__post'>
-                                        {
-                                            blog?.photo &&
-                                            <img
-                                                className='blog__image'
-                                                loading={"lazy"}
-                                                alt={blog?.title}
-                                                src={blog?.photo}
-                                            />
-                                        }
-                                        <div className="blog__details">
-                                            <span><Tag color="magenta">{blog?.category}</Tag></span>
-                                            <h2>{blog.title}</h2>
-                                            <p>
-                                                <span dangerouslySetInnerHTML={{ __html: `${blog.description.slice(0, 250).trim()}...` }}></span>
-                                            </p>
-                                            <div class="article__footer">
-                                                <span class="blog__author"><Avatar src={blog?.posted_by?.pic} alt={blog?.posted_by?.user_name} /> {blog?.posted_by?.user_name}</span>
-                                                <span class="blog__date">{new Date(blog.createdAt).toUTCString()}</span>
-                                            </div>
-
-                                            <Divider className='divider' />
-                                            <div className='blog__actions'>
-                                                <div className='blog___actions__container'>
-                                                    <div className='blog__likes' onClick={() => handleLike(blog)}>
-                                                        <Text strong>{blog?.likes?.length}</Text>
-                                                        <HeartTwoTone className='like__icon' title={blog?.likes?.length} twoToneColor={blog.likes.includes(userInfo.id) ? "#eb2f96" : null} />
-                                                    </div>
-                                                    {userInfo?.id === blog?.posted_by?._id &&
-                                                        <div>
-                                                            <DeleteOutlined className='delete__icon' onClick={(e) => { setSelectedBlog(blog); setVisible(true); }} />
-                                                            <Button className='edit_btn' onClick={(e) => { setSelectedBlog(blog); setEditModalVisible(true) }}
-                                                                type="link" icon={<EditOutlined className='edit__icon' />}>{"Edit"}</Button>
+                                                <Divider className='divider' />
+                                                <div className='blog__actions'>
+                                                    <div className='blog___actions__container'>
+                                                        <div className='blog__likes' onClick={(event) => {
+                                                            event.stopPropagation()
+                                                            handleLike(blog)
+                                                        }}>
+                                                            <Text strong>{blog?.likes?.length}</Text>
+                                                            <HeartTwoTone className='like__icon' title={blog?.likes?.length} twoToneColor={blog.likes.includes(userInfo.id) ? "#eb2f96" : null} />
                                                         </div>
-                                                    }
+                                                        {userInfo?.id === blog?.posted_by?._id &&
+                                                            <div>
+                                                                <DeleteOutlined className='delete__icon' onClick={(e) => { e.stopPropagation(); setSelectedBlog(blog); setVisible(true); }} />
+                                                            </div>
+                                                        }
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </article>
-                                </>
-                            )}
-                        />
-                    </InfiniteScroll>
+                                        </article>
+                                    </React.Fragment>
+                                )}
+                            </div>
+                        </InfiniteScroll>
+                        :
+                        <Empty description={`No blogs for ${categoryList.categoriesDisplayName[tab.activeTab]} `} />
+                    }
+                </>
                 }
             </Card>
             <Modal

@@ -137,7 +137,7 @@ const CreateBlog = ({ from, blog, setVisible }) => {
                                     listType="picture"
                                     accept="image/*"
                                 >
-                                    <Button type='text' style={{ height: "100%", width: "100%", }}>{blog?.photo ? <Image preview={false} loading={"lazy"}
+                                    <Button type='text' style={{ height: "100%", width: "100%", }}>{blog?.photo ? <Image preview={false}
                                         src={blog?.photo} style={{ width: "100%", height: "100%" }} /> : "Upload Image"} </Button>
                                 </Upload>
 

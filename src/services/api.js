@@ -16,6 +16,8 @@ export const updateProfileApi = sendPost("api/update-profile")
 
 export const updateLikeApi = sendPost("api/like")
 
+export const fetchCategoriesApi = sendPost("api/categories")
+
 
 
 

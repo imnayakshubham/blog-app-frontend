@@ -92,6 +92,7 @@ function* deleteBlogSaga({ payload }) {
             yield put(deleteBlogFailure(message))
         }
     } catch (error) {
+        console.log({ error });
         notification.error({
             message: "SomeThing Went Wrong",
             duration: 2.5,
@@ -121,6 +122,7 @@ function* updateBlogSaga({ payload }) {
             yield put(updateBlogFailure(message))
         }
     } catch (error) {
+        console.log({ error });
         notification.error({
             message: "SomeThing Went Wrong",
             duration: 2.5,
@@ -155,12 +157,10 @@ function* updateLikeSaga({ payload }) {
     }
 }
 
-
 export default function* rootSaga() {
     yield takeLatest(addBlogRequest, addBlogSaga)
     yield takeLatest(fetchBlogsRequest, fetchBlogsSaga)
     yield takeLatest(deleteBlogRequest, deleteBlogSaga)
     yield takeLatest(updateBlogRequest, updateBlogSaga)
     yield takeLatest(updateLikeRequest, updateLikeSaga)
-
 }

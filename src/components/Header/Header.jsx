@@ -53,7 +53,7 @@ const Header = () => {
 
     return (
         <>
-            <header style={{ display: "flex", justifyContent: "space-between", padding: "1.5rem", height: "60px", width: "100%" }}>
+            <header className="nav__bar">
                 <div>
                     <Link to="/">
                         <Title level={4}>Blogs</Title>
@@ -63,7 +63,7 @@ const Header = () => {
                     {
                         (userInfo.email) ?
                             <Space>
-                                <Link to="/create">
+                                <Link to="/publish">
                                     <Text>Create Post</Text>
                                 </Link>
                                 <Dropdown menu={{ items: userDetailMenu }} placement="bottom" onClick={e => e.stopPropagation()}
@@ -85,7 +85,7 @@ const Header = () => {
                             :
                             <Space>
                                 <Dropdown menu={{ items }} placement="bottom" trigger={['click']}>
-                                    <Button type="text" icon={<UserOutlined />} onClick={e => e.stopPropagation()}>{"Welcome"}</Button>
+                                    <Button className="nav__options" type="text" icon={<UserOutlined />} onClick={e => e.stopPropagation()}>{"Welcome"}</Button>
                                 </Dropdown>
                             </Space>
                     }

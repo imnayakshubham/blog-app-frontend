@@ -10,13 +10,7 @@ const defaultState = {
     fetchBlogsErrorMessage: "",
     blogsData: {
         blogs: {
-            all: [],
-            Fashion: [],
-            Technology: [],
-            Food: [],
-            Politics: [],
-            Sports: [],
-            Business: [],
+
         },
         total: 0,
     },
@@ -59,15 +53,24 @@ const blogsReducer = handleActions({
     [FetchBlogsActionTypes.SUCCESS]: (state, action) => {
         const currentCategory = action.payload.category ? action.payload.category : "all";
         const stateData = state.blogsData.blogs?.[currentCategory] || [];
-        const actionData = action.payload.response?.blogs || [];
+        const apiResponse = action.payload.response?.blogs || [];
         const total = action.payload.response?.total || 0;
+        let blogData = {}
+
+        if (!action.payload.category) {
+            blogData = { ...state.blogsData.blogs, [currentCategory]: [...apiResponse] }
+        } else {
+            blogData = {
+                ...state.blogsData.blogs, [currentCategory]: [...stateData, ...apiResponse]
+            }
+        }
 
         return {
             ...state,
             fetchBlogsStatus: AsyncStates.SUCCESS,
             fetchBlogsErrorMessage: "",
             blogsData: {
-                blogs: { ...state.blogsData.blogs, [currentCategory]: [...stateData, ...actionData] }, total
+                blogs: blogData, total
             },
         };
     },
@@ -84,10 +87,11 @@ const blogsReducer = handleActions({
     }),
     [DeleteBlogActionTypes.SUCCESS]: (state, action) => {
         const data = action.payload.reducerPayload;
-        const resultForAll = state.blogsData.blogs["all"].filter((blog) => blog._id !== data.id);
-        const resultForCategory = state.blogsData.blogs[data.category].filter((blog) => blog._id !== data.id);
+        const blogData = state.blogsData.blogs
+        const resultForAll = blogData["all"].filter((blog) => blog._id !== data.id);
+        const resultForCategory = blogData[data.category]?.filter((blog) => blog._id !== data.id);
         const finalObj = {
-            ...state.blogsData.blogs,
+            ...blogData,
             all: resultForAll,
             [data.category]: resultForCategory,
         }
@@ -115,6 +119,8 @@ const blogsReducer = handleActions({
     [UpdateBlogActionTypes.SUCCESS]: (state, action) => {
         const { payload } = action.payload
         const blogs = state.blogsData.blogs
+
+        console.log({ blogs, payload });
 
         const resultForAll = blogs["all"].find((blog) => blog._id === payload._id);
         const resultForCategory = blogs[payload.category].find((blog) => blog._id === payload._id);
@@ -144,20 +150,20 @@ const blogsReducer = handleActions({
     [UpdateLikeActionTypes.SUCCESS]: (state, action) => {
         const { payload, response } = action.payload
         const blogs = state.blogsData.blogs
+        const category = payload.isAll ? "all" : payload.category
 
-        const resultForCategory = blogs[response.category]?.find((blog) => blog?._id === payload.blogId) ?? {};
+        blogs[category].forEach((curr, index) => {
+            if (curr._id === payload.blogId) {
+                blogs[category][index] = response
+            }
+        })
 
-        const finalObj = {
-            ...blogs,
-            all: [...blogs["all"].filter((blog) => blog._id !== payload.blogId), response],
-            [payload.category]: resultForCategory ? [...blogs[response.category].filter((blog) => blog._id !== payload._id), response] : [...blogs[payload.category]],
-        }
         return {
             ...state,
             updateBlogStatus: AsyncStates.SUCCESS,
             updateBlogMessage: action.payload.response,
             blogsData: {
-                blogs: finalObj, total: state.blogsData.total
+                blogs: blogs, total: state.blogsData.total
             },
         }
     },
@@ -165,8 +171,7 @@ const blogsReducer = handleActions({
         ...state,
         updateBlogStatus: AsyncStates.ERROR,
         updateBlogError: action.payload.error
-    }),
-
+    })
 }, defaultState);
 
 export default blogsReducer; 

@@ -74,7 +74,6 @@ export const BlogCard = ({ blog }) => {
                             alt={blog?.title}
                             src={blog?.photo}
                             preview={false}
-                            loading={"lazy"}
                             onClick={(e) => { e.preventDefault(); navigateTo(`/blog/${blog?._id}`, { state: blog }) }}
                         />
                     }

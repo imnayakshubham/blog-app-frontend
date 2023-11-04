@@ -200,7 +200,7 @@ const Blogs = React.memo(() => {
                             </div>
                         </InfiniteScroll>
                         :
-                        <Empty description={`No blogs for ${categoryList.categoriesDisplayName[tab.activeTab]} `} />
+                        <Empty description={`No blogs for ${categoryList.categoriesDisplayName[tab.activeTab] ?? 'All'} `} />
                     }
                 </>
                 }
